@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:bb="http://www.blackboard.com/content-packaging/" identifier="man00001"><organizations/><resources><resource identifier="res00001" type="assessment/x-bb-qti-pool" xml:base="res00001" bb:file="res00001.dat" bb:title="Fill in the blank questions."/><resource identifier="res00002" type="resource/x-mhhe-course-cx" xml:base="res00002" bb:file="res00002.dat" bb:title="LinearTransformations_v2"/></resources></manifest>
