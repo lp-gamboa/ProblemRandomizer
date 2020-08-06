@@ -1,9 +1,9 @@
 import sys
-import BlackboardQuiz as bbq 
+import MyBlackboardQuiz as bbq 
 import RandomMathObjects as rmo 
 from numpy import random as nr 
 import json 
-from sympy import sympify, latex, lambdify, expr
+from sympy import sympify, latex, lambdify, expr, diff, symbols
 
 # ------------------------------------------------------------------------
 def gen_variable(k, desc, var_values): 
@@ -143,7 +143,7 @@ def gen_variable(k, desc, var_values):
                         sympify(var_params["dimension"]).subs(subs_values)}
         params["sym"] = (True if not "simetrica" in optional 
                     else sympify(var_params["simetrica"]).subs(subs_values))
-        params["max_val"] = (e if not "max_val" in optional 
+        params["max_val"] = (3 if not "max_val" in optional 
                     else sympify(var_params["max_val"]).subs(subs_values))
         var_values[k] = rmo.gen_sym_matrix(size=params["size"], 
                         sym=params["sym"], max_val=params["max_val"])
@@ -155,6 +155,12 @@ def gen_variable(k, desc, var_values):
         expr_fun = var_values[var_params["function"]] 
         var_values[k] = expr_fun.subs(val_fun_vars)
         # var_values[k] = ?
+    
+    elif var_type=="DERIVAR_FUNCION":
+        foo, vars_diff = var_values[var_params["function"]], var_params["variables"] 
+        for a in vars_diff:
+            foo = diff(foo, symbols(a))
+        var_values[k] = foo
         
     elif var_type=="EVALUAR_EXPRESION":
         var_values[k] = sympify(var_params["expr"]).subs(subs_values)
@@ -170,13 +176,18 @@ def gen_variable(k, desc, var_values):
     else: 
         print("caso no implementado... :c") 
     return var_values 
+    
 # ------------------------------------------------------------------------
-
 
 def eval_answer(ans_type, ans_desc, var_values): 
     # este método solo debe retornar un número o un string segun sea el caso (como sabemos que retornar? buena pregunta) 
     if ans_type=="NUM":
         return sympify(ans_desc).subs(var_values)
+    elif ans_type=="ESS":
+        answer = ans_desc
+        for k,v in var_values.items():
+            answer = answer.replace("["+k+"]", latex(v))
+        return answer
     else:
         return 0
 
@@ -195,6 +206,27 @@ def gen_num_qs(pool, q_object): # acá q_object se maneja como un diccionario
         pool.addNumQ(nombre, cuerpo, respuesta, erramt=0.001) 
 
 
+def gen_ess_qs(pool, q_object):
+    for i in range(q_object["cantidad"]):
+        nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
+        variables, val_variables = q_object["variables"].items(), {} 
+        for k, v in variables:
+            val_variables = gen_variable(k, v, val_variables) 
+            cuerpo = cuerpo.replace("["+k+"]", latex(val_variables[k]))
+        ans_desc_object = q_object["respuesta"]
+        ans_type = q_object["tipo"]
+        respuesta = eval_answer(ans_type, ans_desc_object,     val_variables) 
+        pool.addEssQ(nombre, cuerpo, respuesta) 
+
+
+def gen_file_qs(pool, q_object):
+    for i in range(q_object["cantidad"]):
+        nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
+        variables, val_variables = q_object["variables"].items(), {} 
+        for k, v in variables:
+            val_variables = gen_variable(k, v, val_variables) 
+            cuerpo = cuerpo.replace("["+k+"]", latex(val_variables[k])) 
+        pool.addFileQ(nombre, cuerpo) 
 #def gen_multchoice_qs(pool, q_object):
 
 
@@ -204,7 +236,7 @@ def gen_num_qs(pool, q_object): # acá q_object se maneja como un diccionario
 #def gen_numc_qs(pool, q_object): 
 
 
-qt_switcher = {"NUM": gen_num_qs}#, "NUMC": gen_numc_qs, "MC": gen_multchoice_qs, "FIBS": gen_fib_qs} # "ESS", "TF", "FIL" 
+qt_switcher = {"NUM": gen_num_qs, "ESS": gen_ess_qs, "FIL": gen_file_qs}#, "NUMC": gen_numc_qs, "MC": gen_multchoice_qs, "FIBS": gen_fib_qs} # "ESS", "TF", "FIL" 
 path_json = sys.argv[1] 
 
 with open(path_json,"r") as read_file:  
