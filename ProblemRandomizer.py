@@ -3,12 +3,11 @@ import MyBlackboardQuiz as bbq
 import RandomMathObjects as rmo 
 from numpy import random as nr 
 import json 
-from sympy import sympify, latex, lambdify, expr, diff, symbols
+from sympy import * 
 
 # ------------------------------------------------------------------------
 def gen_variable(k, desc, var_values): 
     var_type = list(desc.keys())[0]
-    print(var_type) 
     var_params = desc[var_type] 
     optional = list(var_params.keys()) 
     subs_values = [(sympify(kk), vv) for kk,vv in var_values.items()] 
@@ -17,6 +16,11 @@ def gen_variable(k, desc, var_values):
         min_v, max_v = var_params["min"], var_params["max"]
         nuevo_entero = nr.choice(max_v+1-min_v)+min_v
         var_values[k] = nuevo_entero
+        
+    elif var_type=="PUNTO":
+        coords = var_params.keys()
+        val_coords = [sympify(var_params[a]).subs(subs_values) for a in coords] 
+        var_values[k] = tuple(val_coords) 
         
     elif var_type=="VECTOR_COLUMNA": 
         params = { "size": var_params["num_coords"] } 
@@ -154,7 +158,6 @@ def gen_variable(k, desc, var_values):
         val_fun_vars = [(sympify(a), var_values[punto[a]]) for a in fun_vars]
         expr_fun = var_values[var_params["function"]] 
         var_values[k] = expr_fun.subs(val_fun_vars)
-        # var_values[k] = ?
     
     elif var_type=="DERIVAR_FUNCION":
         foo, vars_diff = var_values[var_params["function"]], var_params["variables"] 
@@ -177,10 +180,9 @@ def gen_variable(k, desc, var_values):
         print("caso no implementado... :c") 
     return var_values 
     
-# ------------------------------------------------------------------------
+# ---------------------------------------------------------------
 
 def eval_answer(ans_type, ans_desc, var_values): 
-    # este método solo debe retornar un número o un string segun sea el caso (como sabemos que retornar? buena pregunta) 
     if ans_type=="NUM":
         return sympify(ans_desc).subs(var_values)
     elif ans_type=="ESS":
@@ -188,6 +190,14 @@ def eval_answer(ans_type, ans_desc, var_values):
         for k,v in var_values.items():
             answer = answer.replace("["+k+"]", latex(v))
         return answer
+    elif ans_type=="FIBS":
+        answer = {}
+        for k,v in ans_desc.items():
+            answer[k] = [str(sympify(v).subs(var_values))]
+        return answer
+    elif ans_type=="MCQ":
+        answers, correct = ans_desc["opciones"], ans_desc["correcta"]
+        return ["$$"+latex(sympify(a).subs(var_values))+"$$" for a in answers], correct 
     else:
         return 0
 
@@ -227,21 +237,43 @@ def gen_file_qs(pool, q_object):
             val_variables = gen_variable(k, v, val_variables) 
             cuerpo = cuerpo.replace("["+k+"]", latex(val_variables[k])) 
         pool.addFileQ(nombre, cuerpo) 
-#def gen_multchoice_qs(pool, q_object):
+        
+        
+def gen_fib_qs(pool, q_object):
+    for i in range(q_object["cantidad"]):
+        nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
+        variables, val_variables = q_object["variables"].items(), {} 
+        for k, v in variables:
+            val_variables = gen_variable(k, v, val_variables) 
+            cuerpo = cuerpo.replace("["+k+"]", latex(val_variables[k]))
+        ans_desc_object = q_object["respuesta"]
+        ans_type = q_object["tipo"]
+        respuesta = eval_answer(ans_type, ans_desc_object,     val_variables) 
+        pool.addFITBQ(nombre, cuerpo, respuesta) 
+
+        
+def gen_multchoice_qs(pool, q_object):
+    for i in range(q_object["cantidad"]):
+        nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
+        variables, val_variables = q_object["variables"].items(), {} 
+        for k, v in variables:
+            val_variables = gen_variable(k, v, val_variables) 
+            cuerpo = cuerpo.replace("["+k+"]", latex(val_variables[k]))
+        ans_desc_object = q_object["respuesta"]
+        ans_type = q_object["tipo"]
+        respuestas, correcta = eval_answer(ans_type, 
+                                ans_desc_object, val_variables) 
+        pool.addMCQ(nombre, cuerpo, respuestas, correcta) 
 
 
-#def gen_fib_qs(pool, q_object):
-
-
-#def gen_numc_qs(pool, q_object): 
-
-
-qt_switcher = {"NUM": gen_num_qs, "ESS": gen_ess_qs, "FIL": gen_file_qs}#, "NUMC": gen_numc_qs, "MC": gen_multchoice_qs, "FIBS": gen_fib_qs} # "ESS", "TF", "FIL" 
+# ----------------------------------------------------------------------------
+qt_switcher = { "NUM": gen_num_qs, "ESS": gen_ess_qs, 
+                "FIL": gen_file_qs, "FIBS": gen_fib_qs, 
+                "MCQ": gen_multchoice_qs }
 path_json = sys.argv[1] 
-
 with open(path_json,"r") as read_file:  
     test_info = json.load(read_file)
-    """ test_info is a json object that contains all data needed for the test. """
+    # test_info is a json object that contains all data needed for the test.
     qs_info = test_info["preguntas"] # <- this is a list of json objects.
     with bbq.Package(test_info["nombre"]) as package: 
         for i in range(len(qs_info)): 

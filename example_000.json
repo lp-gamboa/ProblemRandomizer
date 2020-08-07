@@ -2,7 +2,7 @@
   "nombre": "Examen 000",
   "preguntas": [
     {
-      "id": "Pregunta",
+      "id": "Pregunta 3",
       "tipo": "FIL",
       "descripcion": "Acá va la descripción del tipo de pregunta.",
       "instrucciones": "Suba un archivo que contenga su solución al ejercicio.",
