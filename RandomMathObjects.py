@@ -24,7 +24,7 @@ def gen_matrix_rank(size: MatSize, rank: int, max_denom: int = 1, max_val: int =
 
 def gen_diagonal_matrix(size: int, det, max_denom: int =1): 
     """ Generates a random diagonal (size)x(size)-matrix with given determinant. """
-    A, a, idx = eye(size), nr.choice(size), nr.choice(size, 2*int(size/3), replace=False)
+    A, a, idx = eye(size), nr.choice(size), nr.choice(size, min(2*int(max(size,3)/3),size), replace=False)
     A = A.elementary_row_op(op="n->kn", row=idx[0], k=det)
     for x in range(int(size/3)):
         aux = nr.choice(3,2,replace=False)
