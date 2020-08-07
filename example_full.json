@@ -1,0 +1,287 @@
+{
+  "nombre": "Examen 0",
+  "preguntas": [
+    {
+      "id": "Pregunta 1",
+      "tipo": "NUM",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones de la pregunta.",
+      "cuerpo": "Encuentre el valor de la derivada de la función $$f(x) = [p]$$ en $$c = [a]$$.",
+      "respuesta": "y",
+      "variables": {
+        "p": {
+          "POLINOMIO_MONICO": {
+            "degree": 3,
+            "lin_factors": true,
+            "variable": "x"
+          }
+        },
+        "a": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "y": {
+          "EVALUAR_FUNCION": {
+            "function": "p",
+            "punto": {
+              "x": "a"
+            }
+          }
+        }
+      },
+      "cantidad": 8
+    },
+    {
+      "id": "Pregunta 2",
+      "tipo": "NUM",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones de la pregunta.",
+      "cuerpo": "Considere el plano dado por la ecuación $$[a]x+[b]y+[c]z=[d]$$. Encuentre la distancia de este al origen.",
+      "respuesta": "y",
+      "variables": {
+        "a": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "b": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "c": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "d": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "y": {
+          "EVALUAR_EXPRESION": {
+            "expr": "abs(d)/sqrt(a**2+b**2+c**2)"
+          }
+        }
+      },
+      "cantidad": 5
+    },
+    {
+      "id": "Pregunta 3",
+      "tipo": "NUM",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones de la pregunta.",
+      "cuerpo": "Halle la nulidad de la siguiente matriz: $$[m]$$",
+      "respuesta": "r",
+      "variables": {
+        "k": {
+          "ENTERO": {
+            "max": 4,
+            "min": 1
+          }
+        },
+        "m": {
+          "MATRIZ_RANGO": {
+            "num_filas": 4,
+            "num_columnas": 4,
+            "rank": "k"
+          }
+        },
+        "r": {
+          "OPERACION_MATRICIAL": {
+            "operacion": "CALC_NUL",
+            "matriz": "m"
+          }
+        }
+      },
+      "cantidad": 7
+    },
+    {
+      "id": "Pregunta 4",
+      "tipo": "ESS",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones de la pregunta.",
+      "cuerpo": "Encuentre la derivada de la función $$f(x) = [p]$$ con respecto a $$x$$.",
+      "respuesta": "$$[q]$$",
+      "variables": {
+        "p": {
+          "POLINOMIO_MONICO": {
+            "degree": 5,
+            "lin_factors": false,
+            "variable": "x"
+          }
+        },
+        "q": {
+          "DERIVAR_FUNCION": {
+            "function": "p",
+            "variables": [
+              "x"
+            ]
+          }
+        }
+      },
+      "cantidad": 4
+    },
+    {
+      "id": "Pregunta 5",
+      "tipo": "ESS",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones de la pregunta.",
+      "cuerpo": "Encuentre un vector normal al plano dado por la ecuación $$[a]x+[b]y+[c]z=[d]$$.",
+      "respuesta": "$$([a],[b],[c])$$",
+      "variables": {
+        "a": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "b": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "c": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        },
+        "d": {
+          "ENTERO": {
+            "max": 4,
+            "min": -4
+          }
+        }
+      },
+      "cantidad": 5
+    },
+    {
+      "id": "Pregunta 6",
+      "tipo": "FIL",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Suba un archivo que contenga su solución al ejercicio.",
+      "cuerpo": "Determine si la siguiente matriz es diagonalizable: $$A = [a]$$.",
+      "respuesta": "",
+      "variables": {
+        "a": {
+          "MATRIZ_SIMETRICA": {
+            "dimension": 3,
+            "sym": true
+          }
+        }
+      },
+      "cantidad": 7
+    },
+    {
+      "id": "Pregunta 7",
+      "tipo": "FIBS",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Instrucciones.",
+      "cuerpo": "La recta con ecuación $$y = [m]x+[b]$$ cruza al eje X en el punto [A] y cruza al eje Y en el punto [B].",
+      "respuesta": {
+        "A": "p",
+        "B": "q"
+      },
+      "variables": {
+        "m": {
+          "ENTERO": {
+            "min": 1,
+            "max": 8
+          }
+        },
+        "b": {
+          "ENTERO": {
+            "min": -5,
+            "max": 5
+          }
+        },
+        "p": {
+          "PUNTO": {
+            "x": "-b/m",
+            "y": "0"
+          }
+        },
+        "q": {
+          "PUNTO": {
+            "x": "0",
+            "y": "b"
+          }
+        }
+      },
+      "cantidad": 6
+    },
+    {
+      "id": "Pregunta 8",
+      "tipo": "MCQ",
+      "descripcion": "Acá va la descripción del tipo de pregunta.",
+      "instrucciones": "Selección múltiple.",
+      "cuerpo": "La derivada de la función $$f(x) = [f] - ([g])[h]$$ es:",
+      "respuesta": {
+        "opciones": [
+          "a-b*h-g*c",
+          "a-b*c",
+          "a-b*h+g*c"
+        ],
+        "correcta": 0
+      },
+      "variables": {
+        "m": {
+          "ENTERO": {
+            "min": 2,
+            "max": 7
+          }
+        },
+        "f": {
+          "EVALUAR_EXPRESION": {
+            "expr": "m*cos(x)"
+          }
+        },
+        "g": {
+          "POLINOMIO_MONICO": {
+            "degree": 1,
+            "variable": "x"
+          }
+        },
+        "h": {
+          "EVALUAR_EXPRESION": {
+            "expr": "tan(x)"
+          }
+        },
+        "a": {
+          "DERIVAR_FUNCION": {
+            "function": "f",
+            "variables": [
+              "x"
+            ]
+          }
+        },
+        "b": {
+          "DERIVAR_FUNCION": {
+            "function": "g",
+            "variables": [
+              "x"
+            ]
+          }
+        },
+        "c": {
+          "DERIVAR_FUNCION": {
+            "function": "h",
+            "variables": [
+              "x"
+            ]
+          }
+        }
+      },
+      "cantidad": 6
+    }
+  ]
+}
