@@ -7,6 +7,11 @@ from sympy import *
 
 # ------------------------------------------------------------------------
 def gen_variable(k, desc, var_values): 
+    """Agrega al diccionario de valores de las variables, var_values,
+    el valor (k, valor) correspondiente a la muestra de la variable k
+    generada a partir de los métodos desarrollados en el módulo 
+    RandomMathObjects siguiendo los parámetros contenidos en el 
+    parámetro de descripción, desc."""
     var_type = list(desc.keys())[0]
     var_params = desc[var_type] 
     optional = list(var_params.keys()) 
@@ -165,6 +170,12 @@ def gen_variable(k, desc, var_values):
             foo = diff(foo, symbols(a))
         var_values[k] = foo
         
+    elif var_type=="ANTIDERIVAR_FUNCION":
+        foo, vars_int = var_values[var_params["function"]], var_params["variables"] 
+        for a in vars_diff:
+            foo = integrate(foo, symbols(a))
+        var_values[k] = foo
+        
     elif var_type=="EVALUAR_EXPRESION":
         var_values[k] = sympify(var_params["expr"]).subs(subs_values)
         
@@ -181,8 +192,10 @@ def gen_variable(k, desc, var_values):
     return var_values 
     
 # ---------------------------------------------------------------
-
 def eval_answer(ans_type, ans_desc, var_values): 
+    """Retorna el valor para el campo de respuesta de la pregunta a partir
+    de la muestra para las variables, la descripción de la respuesta y el 
+    tipo de pregunta correspondiente."""
     if ans_type=="NUM":
         return sympify(ans_desc).subs(var_values)
     elif ans_type=="ESS":
@@ -203,6 +216,9 @@ def eval_answer(ans_type, ans_desc, var_values):
 
 
 def gen_num_qs(pool, q_object): # acá q_object se maneja como un diccionario 
+    """Genera una muestra de una pregunta de tipo Respuesta numérica y
+    la agrega al grupo de preguntas correspondiente siguiendo la descripción
+    contenida en q_object."""
     for i in range(q_object["cantidad"]):
         nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
         variables, val_variables = q_object["variables"].items(), {} 
@@ -217,6 +233,9 @@ def gen_num_qs(pool, q_object): # acá q_object se maneja como un diccionario
 
 
 def gen_ess_qs(pool, q_object):
+    """Genera una muestra de una pregunta de tipo Ensayo (Respuesta de texto)
+    y la agrega al grupo de preguntas correspondiente siguiendo la descripción
+    contenida en q_object."""
     for i in range(q_object["cantidad"]):
         nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
         variables, val_variables = q_object["variables"].items(), {} 
@@ -230,6 +249,9 @@ def gen_ess_qs(pool, q_object):
 
 
 def gen_file_qs(pool, q_object):
+    """Genera una muestra de una pregunta de tipo Respuesta de archivo y
+    la agrega al grupo de preguntas correspondiente siguiendo la descripción
+    contenida en q_object."""
     for i in range(q_object["cantidad"]):
         nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
         variables, val_variables = q_object["variables"].items(), {} 
@@ -240,6 +262,9 @@ def gen_file_qs(pool, q_object):
         
         
 def gen_fib_qs(pool, q_object):
+    """Genera una muestra de una pregunta de tipo Completar los espacios en
+    blanco y la agrega al grupo de preguntas correspondiente siguiendo la
+    descripción contenida en q_object."""
     for i in range(q_object["cantidad"]):
         nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
         variables, val_variables = q_object["variables"].items(), {} 
@@ -253,6 +278,9 @@ def gen_fib_qs(pool, q_object):
 
         
 def gen_multchoice_qs(pool, q_object):
+    """Genera una muestra de una pregunta de tipo Respuesta múltiple y
+    la agrega al grupo de preguntas correspondiente siguiendo la descripción
+    contenida en q_object."""
     for i in range(q_object["cantidad"]):
         nombre, cuerpo = q_object["id"]+"_"+str(i+1), q_object["cuerpo"]
         variables, val_variables = q_object["variables"].items(), {} 
